@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment - TazzyMart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+    .item-info {
+      flex: 2;
+    }
+    .item-price {
+      flex: 1;
+      text-align: right;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 20px;
+      text-align: right;
+    }
+    .pay-button {
+      background-color: #D35E17;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+      width: 200px;
+    }
+    .item-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your Order</h1>
+    <div id="cartItems"></div>
+    <div id="totalPrice" class="total"></div>
+    <button class="pay-button" id="payButton">Proceed to Payment</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cart = JSON.parse(localStorage.getItem('tazzyMartCart')) || [];
+      const cartItemsDiv = document.getElementById('cartItems');
+      const totalPriceDiv = document.getElementById('totalPrice');
+      
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = '<p>Your cart is empty</p>';
+        document.getElementById('payButton').style.display = 'none';
+        return;
+      }
+      
+      let total = 0;
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        cartItemsDiv.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://via.placeholder.com/60?text=No+Image'">
+            <div class="item-info">
+              <h3>${item.name}</h3>
+              <p>${item.quantity} x Rp. ${item.price.toLocaleString('id-ID')}</p>
+            </div>
+            <div class="item-price">
+              Rp. ${itemTotal.toLocaleString('id-ID')}
+            </div>
+          </div>
+        `;
+      });
+      
+      totalPriceDiv.textContent = `Total: Rp. ${total.toLocaleString('id-ID')}`;
+      
+      document.getElementById('payButton').addEventListener('click', function() {
+        alert('Payment processed! Thank you for your order.');
+        localStorage.removeItem('tazzyMartCart');
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TazzyMart Clone</title>
+  <link rel="icon" href="imgs/noodles.png" />
+  <style>
+:root {
+  --primary-color: #D35E17;     /* Warna utama (CTA, tombol utama, judul penting) */
+  --secondary-color: #F2AE1C;   /* Warna sekunder (tombol kedua, aksen) */
+  --accent-color: #FAAF86;      /* Warna aksen (highlight, kartu, elemen lembut) */
+  --background-color: #F4E9DD;  /* Warna latar belakang utama */
+  --text-color: #742D00;        /* Warna teks utama atau heading */
+  --card-border: #E8C4A8;       /* Warna border kartu */
+  --price-color: #C4450B;       /* Warna harga (lebih gelap dari primary) */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+header .promo {
+  max-width: 500px;
+}
+
+header img {
+  width: 200px;
+  border-radius: 10px;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filters button {
+  padding: 8px 16px;
+  border: 1px solid var(--primary-color);
+  background: white;
+  color: var(--primary-color);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: white;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-title {
+  font-size: 1rem;
+  margin: 10px 0 5px;
+  height: 40px;
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.product-price {
+  color: var(--price-color);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.add-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+.add-btn:hover {
+  background-color: var(--secondary-color);
+}
+
+.cart-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  color: var(--primary-color);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--secondary-color);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.quantity-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.quantity-btn:hover {
+  background-color: var(--secondary-color);
+}
+
+.quantity-display {
+  margin: 0 10px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="promo">
+      <h1>Selamat Datang di <span style="color: #ff0;">Ramein!</span></h1>
+      <p>Ramen murah dan terjangkau. Halal no babiiii!!!!</p>
+    </div>
+    <img src="imgs/ramen (1).png" alt="Promo Image">
+    <button class="cart-btn" id="cartButton">
+      🛒
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <div class="container">
+    <div class="filters">
+      <button data-category="all">Semua</button>
+      <button data-category="mie">Mie</button>
+      <button data-category="dimsum">Dimsum</button>
+      <button data-category="minuman">Minuman</button>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+
+    </div>
+  </div>
+
+  <script>
+    // data pruduk
+    const productData = [
+      {
+        id: 1,
+        name: "Ramen enak",
+        price: 30000,
+        category: "mie",
+        image: "imgs/ramen2.jpg"
+      },
+      {
+        id: 2,
+        name: "Ramen segar",
+        price: 45000,
+        category: "mie",
+        image: "imgs/ramen3.jpg"
+      },
+      {
+        id: 3,
+        name: "Ramen bagus",
+        price: 23000,
+        category: "mie",
+        image: "imgs/ramen4.jpg"
+      },
+      {
+        id: 4,
+        name: "Ramen better",
+        price: 50000,
+        category: "mie",
+        image: "imgs/ramen5.jpg"
+      },
+      {
+        id: 5,
+        name: "Dimsum Enak",
+        price: 40000,
+        category: "dimsum",
+        image: "imgs/dimsum1.jpg"
+      },
+      {
+        id: 6,
+        name: "Dimsum sehat",
+        price: 33000,
+        category: "dimsum",
+        image: "imgs/dimsum2.jpg"
+      },
+      {
+        id: 7,
+        name: "Dimsum kuat",
+        price: 12000,
+        category: "dimsum",
+        image: "imgs/dimsum3.jpg"
+      },
+      {
+        id: 8,
+        name: "Dimsum wow",
+        price: 44000,
+        category: "dimsum",
+        image: "imgs/dimsum4.jpg"
+      },
+      {
+        id: 9,
+        name: "Dimsum yeah",
+        price: 32000,
+        category: "dimsum",
+        image: "imgs/dimsum5.jpg"
+      },
+      {
+        id: 10,
+        name: "Minum segar",
+        price: 15000,
+        category: "minuman",
+        image: "imgs/minum1.jpg"
+      },
+      {
+        id: 11,
+        name: "Minum es",
+        price: 12000,
+        category: "minuman",
+        image: "imgs/minum2.jpg"
+      },
+      {
+        id: 12,
+        name: "Minum Apaya",
+        price: 18000,
+        category: "minuman",
+        image: "imgs/minum3.jpg"
+      }
+    ];
+
+    // fungsi harga fpprmat
+    function formatPrice(price) {
+      return `Rp. ${price.toLocaleString('id-ID')}`;
+    }
+
+    // nambahin keranjang
+    const cart = {
+      items: [],
+      addItem(product) {
+        const existingItem = this.items.find(item => item.id === product.id);
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          this.items.push({ ...product, quantity: 1 });
+        }
+        this.updateCart();
+      },
+      removeItem(productId) {
+        const existingItem = this.items.find(item => item.id === productId);
+        if (existingItem) {
+          existingItem.quantity -= 1;
+          if (existingItem.quantity <= 0) {
+            this.items = this.items.filter(item => item.id !== productId);
+          }
+        }
+        this.updateCart();
+      },
+      updateCart() {
+        localStorage.setItem('tazzyMartCart', JSON.stringify(this.items));
+        document.getElementById('cartCount').textContent = this.getTotalItems();
+        this.updateProductCards();
+      },
+      getTotalItems() {
+        return this.items.reduce((total, item) => total + item.quantity, 0);
+      },
+      loadCart() {
+        const savedCart = localStorage.getItem('tazzyMartCart');
+        this.items = savedCart ? JSON.parse(savedCart) : [];
+        this.updateCart();
+      },
+      updateProductCards() {
+        document.querySelectorAll('.product-card').forEach(card => {
+          const productId = parseInt(card.dataset.id);
+          const cartItem = this.items.find(item => item.id === productId);
+          const quantityControls = card.querySelector('.quantity-controls');
+          
+          if (cartItem) {
+            if (!quantityControls) {
+              const controls = document.createElement('div');
+              controls.className = 'quantity-controls';
+              controls.innerHTML = `
+                <button class="quantity-btn minus-btn" data-id="${productId}">-</button>
+                <span class="quantity-display">${cartItem.quantity}</span>
+                <button class="quantity-btn plus-btn" data-id="${productId}">+</button>
+              `;
+              card.querySelector('.add-btn')?.replaceWith(controls);
+            } else {
+              quantityControls.querySelector('.quantity-display').textContent = cartItem.quantity;
+            }
+          } else {
+            if (quantityControls) {
+              const addBtn = document.createElement('button');
+              addBtn.className = 'add-btn';
+              addBtn.dataset.id = productId;
+              addBtn.textContent = 'Add to Cart';
+              quantityControls.replaceWith(addBtn);
+              
+              addBtn.addEventListener('click', () => {
+                const product = productData.find(p => p.id === productId);
+                if (product) {
+                  cart.addItem(product);
+                }
+              });
+            }
+          }
+        });
+        
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            cart.removeItem(parseInt(e.target.dataset.id));
+          });
+        });
+        
+        document.querySelectorAll('.plus-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const product = productData.find(p => p.id === parseInt(e.target.dataset.id));
+            if (product) {
+              cart.addItem(product);
+            }
+          });
+        });
+      }
+    };
+
+    // Create product card
+    function createProductCard(product) {
+      const cartItem = cart.items.find(item => item.id === product.id);
+      
+      let controlsHTML;
+      if (cartItem) {
+        controlsHTML = `
+          <div class="quantity-controls">
+            <button class="quantity-btn minus-btn" data-id="${product.id}">-</button>
+            <span class="quantity-display">${cartItem.quantity}</span>
+            <button class="quantity-btn plus-btn" data-id="${product.id}">+</button>
+          </div>
+        `;
+      } else {
+        controlsHTML = `<button class="add-btn" data-id="${product.id}">Add to Cart</button>`;
+      }
+      
+      return `
+        <div class="product-card" data-id="${product.id}">
+          <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/200x150?text=No+Image'">
+          <div class="product-title">${product.name}</div>
+          <div class="product-price">${formatPrice(product.price)}</div>
+          ${controlsHTML}
+        </div>
+      `;
+    }
+
+    // Render products
+    function renderProducts(products) {
+      const productGrid = document.getElementById('productGrid');
+      productGrid.innerHTML = products.map(product => createProductCard(product)).join('');
+      
+      document.querySelectorAll('.add-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = parseInt(this.dataset.id);
+          const product = productData.find(p => p.id === productId);
+          if (product) {
+            cart.addItem(product);
+          }
+        });
+      });
+      
+      cart.updateProductCards();
+    }
+
+    // Filter products
+    document.querySelectorAll('.filters button').forEach(button => {
+      button.addEventListener('click', function() {
+        const category = this.dataset.category;
+        const filteredProducts = category === 'all' 
+          ? productData 
+          : productData.filter(p => p.category === category);
+        renderProducts(filteredProducts);
+      });
+    });
+
+    // Cart button click
+    document.getElementById('cartButton').addEventListener('click', function() {
+      if (cart.items.length > 0) {
+        window.location.href = 'payment.html';
+      } else {
+        alert('Your cart is empty!');
+      }
+    });
+
+    // Initialize
+    cart.loadCart();
+    renderProducts(productData);
+  </script>
+</body>
+</html>
